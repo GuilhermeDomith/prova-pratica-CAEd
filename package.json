@@ -1,0 +1,29 @@
+{
+  "name": "prova_pratica_caed",
+  "version": "1.0.0",
+  "description": "API para correção de questões discursivas",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://guilhermedomith@bitbucket.org/guilhermedomith/prova_pratica_caed.git"
+  },
+  "author": "Guilherme Domith",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/guilhermedomith/prova_pratica_caed#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.7"
+  },
+  "devDependencies": {
+    "jest": "^25.3.0",
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
+  }
+}
