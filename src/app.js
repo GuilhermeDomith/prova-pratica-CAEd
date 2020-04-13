@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const routes = require('./routes/routes.js')
+
+const routes = require('./routes/routes.js');
 
 class AppController{
 
@@ -18,7 +19,7 @@ class AppController{
     }
 
     routes() {
-        this.express.use('/', routes)
+        this.express.use('/', routes);
     }
 }
 
