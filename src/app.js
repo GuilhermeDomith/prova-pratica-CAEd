@@ -16,6 +16,12 @@ class AppController{
     middlewares() {
         this.express.use(cors());
         this.express.use(bodyParser.json());
+        /*this.express.use((err, req, res, next) => {
+            console.log(err.name)
+            console.log(err.message)
+            res.send({naosei: 2131})
+            next(err)
+        })*/
     }
 
     routes() {
