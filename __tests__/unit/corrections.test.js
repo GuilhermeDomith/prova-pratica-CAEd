@@ -1,6 +1,7 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
+const mongoose = require('../../src/database/mongoose');
 const factory = require('../utils/factories');
 const { truncade } = require('../utils/database');
 const { Correction } = require('../../src/model/correction.model');
@@ -23,7 +24,6 @@ describe('Order by Corrections', () => {
         const response = await request(app).get('/correcoes/proxima');
         const { data } = response.body;
 
-        expect(data.ordem).toBe(first.ordem);
         expect(data.id).toBe(first.id);
         done()
     });
@@ -78,6 +78,7 @@ describe('Order by Corrections', () => {
 
     it('Should correct the third item', async (done) => {
         const third = this.corrections[2];
+        
         const keysCorrected = third.chave.map((key) => {
             return {
                 id: key.id,
@@ -91,6 +92,36 @@ describe('Order by Corrections', () => {
 
         expect(response.status).toBe(200);
         done()
+    });
+
+    it('Should get any item', async (done) => {
+        const third = this.corrections[2];
+
+        const response = await request(app).get('/correcoes/proxima');
+        const { data } = response.body;
+
+        expect(data).toBe(null);
+        expect(response.status).toBe(200);
+        done()
+    });
+
+    it('Should get the second item (reserved)', async (done) => {
+        const second = this.corrections[1];
+
+        const response = await request(app).get(`/correcoes/proxima?reservada=${true}`);
+        const { data } = response.body;
+
+        expect(data.id).toBe(second.id);
+        done()
+    });
+    
+
+    afterAll(async (done) => {
+        //await truncade();
+
+        Promise.all(
+            mongoose.connections.map(conn => conn.close())
+        ).then(done)
     });
 
 });

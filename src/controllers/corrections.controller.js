@@ -1,51 +1,72 @@
+const { messages } = require('../helpers/success_messages');
+const { CorrectionErrors }  = require('../helpers/error_types');
+const { success } = require('../helpers/responses');
 
 const { Correction } = require('../model/correction.model');
 const { Status } = require('../model/status.model');
 const { Key } = require('../model/key.model');
+const { ErrorHandler } = require('../helpers/exceptions');
 
 
 class CorrectionsController{
 
-    async getNextCorrection(req, res) {
-        let correction = await Correction.getNextAvailable();
-        res.send({ data: correction });
+    getNextCorrection = async (req, res, next) => {
+        const includeReserved = req.query.reservada || false;
+
+        try{
+            let correction = await Correction.getNextAvailable(includeReserved);
+
+            if(correction == null)
+                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, 200, null);
+
+            success(res, correction, null);
+        }catch(err){ 
+            next(err); 
+        }
     }
 
     async correctItem(req, res, next) {
         const { id } = req.params;
         const { chave } = req.body;
 
-        let correction = await Correction.getNextAvailable();
+        try{
+            let correction = await Correction.getNextAvailable();
 
-        if (correction.id !== id)
-            return res.status(400).send('This item cannot be corrected.')
+            if (correction.id !== id)
+                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM, 400);
 
-        await Key.updateManyCorrectionKeyValue(chave, correction.id);
-        await Correction.changeStatusById(id, Status.RESERVADA);
+            await Key.updateManyCorrectionKeyValue(chave, correction.id);
+            await Correction.changeStatusById(id, Status.CORRIGIDA);
 
-        res.send(correction);
+            success(res, messages.ITEM_CORRECTED);
+        }catch(err) { 
+            next(err);
+        }
     }
 
-    async reserveItem(req, res) {
+    async reserveItem(req, res, next) {
         const { id } = req.params;
-        let correction = await Correction.getNextAvailable();
 
-        if (correction.id !== id)
-            return res.status(400).send('This item cannot be reserved.')
+        try{
+            let correction = await Correction.getNextAvailable();
 
-        correction = await Correction.changeStatusById(id, Status.RESERVADA);
-        res.send(correction);
+            if (correction.id !== id)
+                return res.status(400).send('This item cannot be reserved.')
+
+            correction = await Correction.changeStatusById(id, Status.RESERVADA);
+            success(res, null, messages.ITEM_RESERVED);
+        }catch(err) { 
+            next(err); 
+        }
     }
 
     async getAllReserved(req, res, next) {
-        let correction = await Correction.listByStatus(Status.RESERVADA);
-        res.send({ data: correction });
-    }
-
-    async test(req, res){
-        const { id } = req.params;
-
-        res.send(data);
+        try{
+            let corrections = await Correction.listByStatus(Status.RESERVADA);
+            success(res, corrections, null);
+        }catch(err) { 
+            next(err); 
+        }
     }
 }
 

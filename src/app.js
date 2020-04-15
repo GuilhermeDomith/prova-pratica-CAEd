@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const routes = require('./routes/routes.js');
+const routes = require('./routes');
+const { error } = require('./helpers/responses');
+
 
 class AppController{
 
@@ -11,21 +13,22 @@ class AppController{
         
         this.middlewares();
         this.routes();
+        this.handlerError();
     }
     
     middlewares() {
         this.express.use(cors());
         this.express.use(bodyParser.json());
-        /*this.express.use((err, req, res, next) => {
-            console.log(err.name)
-            console.log(err.message)
-            res.send({naosei: 2131})
-            next(err)
-        })*/
     }
 
     routes() {
         this.express.use('/', routes);
+    }
+
+    handlerError(){
+        this.express.use((err, req, res, next) => {
+            error(err, res);
+        });
     }
 }
 

@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const { StatusCorrection, Status } = require('../model/status.model');
 const { Key } = require('../model/key.model');
+const { Option } = require('../model/option.model');
 
 const CorrectionSchema = new Schema({
     item: { type: String, required: true },
@@ -29,14 +30,21 @@ CorrectionSchema.post('save', async function(){
 
 
 CorrectionSchema.statics = {
-    getNextAvailable: () => {
-        return Correction.findOne()
+    getNextAvailable: (reserved=false) => {
+        let find_status = (reserved)? [Status.RESERVADA] : [] 
+        find_status.push(Status.DISPONIVEL);
+
+        return Correction
+            .findOne({ situacao: {$in: find_status}})
             .sort({ situacao: 1 , ordem: 1 })
+            .populate({ path: 'chave', model: 'Key' })
+            .populate({ path: 'chave.opcoes', model: 'Option' })
             .exec();
     },
 
     changeStatusById: (id, status) => {
-        return Correction.findById(id)
+        return Correction
+            .findById(id)
             .then((correction) => {
                 correction.situacao = status;
                 return correction.save();  
@@ -44,7 +52,8 @@ CorrectionSchema.statics = {
     },
 
     listByStatus: (status) => {
-        return Correction.find({ situacao: status })
+        return Correction
+            .find({ situacao: status })
             .sort({ ordem: 1 })
             .exec();
     },

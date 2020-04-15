@@ -5,7 +5,6 @@ router.get('/proxima', correctionsController.getNextCorrection);
 router.post('/:id', correctionsController.correctItem);
 router.post('/reservadas/:id', correctionsController.reserveItem);
 router.get('/reservadas', correctionsController.getAllReserved);
-router.get('/key/:id', correctionsController.test);
 
 module.exports = router;
 

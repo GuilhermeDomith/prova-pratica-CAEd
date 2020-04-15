@@ -14,6 +14,15 @@ KeySchema.post('save', async function(){
     await this.populate({ path: 'opcoes', model: 'Option' }).execPopulate();
 });
 
+const autoPopulateKey = async function(next) {
+    this.populate({ path: 'opcoes', model: 'Option' });
+    next();
+};
+  
+KeySchema
+    .pre('findOne', autoPopulateKey)
+    .pre('find', autoPopulateKey);
+
 KeySchema.statics = {
 
     findKeyWithOption: async (keyId, correctionId, optionValue) => {
