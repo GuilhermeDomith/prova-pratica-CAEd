@@ -7,7 +7,7 @@ const CorrectionSchema = new Schema({
     referencia: { type: String,  required: true },
     sequencial: { type: String,  required: true },
     solicitacao: { type: String,  required: true },
-    situacao: { type: Number , ref: 'StatusCorrection', default: 0 },
+    situacao: { type: Number , default: 0 },
     ordem: { type: Number, required: false, unique: true},
     chave: [
         { type: Schema.Types.ObjectId, ref: 'Key' }

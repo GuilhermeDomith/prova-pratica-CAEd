@@ -35,25 +35,34 @@ $ mongod
 # Utilizará credenciais do '.test.env' para o banco de dados
 # e serão executados todos os testes, utilizando o Jest.
 
-$ npm run test
+$ npm test
 
 # Para executar um único teste, ou ocultar os logs exibidos,
 # utilize os mesmos atributos que seriam utilizados no Jest,
 # inserindo um ou mais comandos após '--', por exemplo:
 
-$ npm run test --  __tests__/unit/invalid_corrections.test.js
-$ npm run test --  --silent
+$ npm test --  __tests__/unit/invalid_corrections.test.js
+$ npm test --  --silent
 
 ```
 
-- Para executar em modo produção ou desenvolvedor.
+- Para executar em ambiente de desenvolvimento.
+
+```Shell
+# Utilizará credenciais do '.test.env' para o banco de dados e
+# será executado com o nodemon.
+
+# A execução do mock é opcional, irá incluir no banco os
+# dados criados no script '__tests__/mocks/first.mock.js'
+
+$ npm run mock 
+$ npm run dev 
+```
+
+- Para executar em ambiente de produção.
 
 ```Shell
 # Utilizará credenciais do '.env' para o banco de dados e
 # será executado com o Node.js.
 $ npm start 
-
-# Utilizará credenciais do '.test.env' para o banco de dados e
-# será executado com o nodemon.
-$ npm run dev 
 ```

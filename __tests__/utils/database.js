@@ -17,9 +17,15 @@ module.exports = {
             console.log('Truncade has been executed.'));      
     },
 
-    closeConnection: async () =>{
+    closeConnection: async () =>{ 
         return Promise.all(
-            mongoose.connections.map(conn => conn.close())
-        )
+               mongoose.connections.map(conn => 
+                    new Promise(function(res, rej){
+                        conn.close()
+                        .then(res)
+                        .catch(res)
+                    })
+                )
+            );
     }
 }
