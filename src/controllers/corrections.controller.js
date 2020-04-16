@@ -21,6 +21,7 @@ class CorrectionsController{
             if(correction == null)
                 throw new ErrorHandler(CorrectionErrors.IS_EMPTY, null, null);
 
+            await correction.populateAll();
             success(res, correction, null);
         }catch(err){ 
             next(err); 
