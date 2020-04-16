@@ -28,6 +28,7 @@ $ mongo
 
 
 2. **Executando a aplicação**
+
 - Para executar os testes.
 ```Shell
 # Utiliza credenciais do .test.env para o banco de dados.
