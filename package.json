@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=prod node index.js",
     "dev": "NODE_ENV=test nodemon index.js",
-    "test": "NODE_ENV=test jest --runInBand --silent"
+    "test": "NODE_ENV=test jest --runInBand"
   },
   "repository": {
     "type": "git",
