@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=prod node index.js",
     "dev": "NODE_ENV=test nodemon index.js",
-    "test": "NODE_ENV=test jest"
+    "test": "NODE_ENV=test jest --runInBand --silent"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.9.7"
+    "mongoose": "^5.9.7",
+    "mongoose-sequence": "^5.2.2"
   },
   "devDependencies": {
     "factory-girl": "^5.0.4",

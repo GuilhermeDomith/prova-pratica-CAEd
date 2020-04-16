@@ -1,23 +1,25 @@
+const mongoose = require('mongoose');
+const { success } = require('../helpers/responses');
+const { ErrorHandler } = require('../helpers/exceptions');
 const { messages } = require('../helpers/success_messages');
 const { CorrectionErrors }  = require('../helpers/error_types');
-const { success } = require('../helpers/responses');
+const correctionService = require('../services/correction.service');
 
-const { Correction } = require('../model/correction.model');
-const { Status } = require('../model/status.model');
-const { Key } = require('../model/key.model');
-const { ErrorHandler } = require('../helpers/exceptions');
+const Correction = mongoose.model('Correction');
+const Key = mongoose.model('Key');
 
 
 class CorrectionsController{
 
-    getNextCorrection = async (req, res, next) => {
-        const includeReserved = req.query.reservada || false;
+    async getNext(req, res, next){
+        const allowReserved = req.query.reservada &&
+            req.query.reservada.toLowerCase() == 'true';
 
         try{
-            let correction = await Correction.getNextAvailable(includeReserved);
+            let correction = await correctionService.getNextAvailable(allowReserved);
 
             if(correction == null)
-                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, 200, null);
+                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, null, null);
 
             success(res, correction, null);
         }catch(err){ 
@@ -25,18 +27,19 @@ class CorrectionsController{
         }
     }
 
-    async correctItem(req, res, next) {
+    async correct(req, res, next) {
         const { id } = req.params;
-        const { chave } = req.body;
-
+        const keys = req.body.chave || [];
+        
         try{
-            let correction = await Correction.getNextAvailable();
+            // valida se existe
+            let correction = await Correction.findById(id);
+            if(correction == null) 
+                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM, 404)
 
-            if (correction.id !== id)
-                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM, 400);
-
-            await Key.updateManyCorrectionKeyValue(chave, correction.id);
-            await Correction.changeStatusById(id, Status.CORRIGIDA);
+            await correctionService.saveKeysFromCorrection(correction, keys);
+            await correctionService.changeStatusById(
+                    correction.id, Correction.Status.CORRIGIDA);
 
             success(res, messages.ITEM_CORRECTED);
         }catch(err) { 
@@ -44,16 +47,25 @@ class CorrectionsController{
         }
     }
 
-    async reserveItem(req, res, next) {
+    async reserve(req, res, next) {
         const { id } = req.params;
+        const keys = req.body.chave || [];
 
         try{
-            let correction = await Correction.getNextAvailable();
+            // valida se existe
+            let correction = await Correction.findById(id);
+            if(correction == null) 
+                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM, 404)
+            
+            // valida se pode ser reservado
+            let nextItem = await correctionService.getNextAvailable();
+            if (nextItem == null || nextItem.id != id)
+                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM);
 
-            if (correction.id !== id)
-                return res.status(400).send('This item cannot be reserved.')
+            await correctionService.saveKeysFromCorrection(correction, keys);
+            await correctionService.changeStatusById(
+                    correction.id, Correction.Status.RESERVADA);
 
-            correction = await Correction.changeStatusById(id, Status.RESERVADA);
             success(res, null, messages.ITEM_RESERVED);
         }catch(err) { 
             next(err); 
@@ -62,7 +74,8 @@ class CorrectionsController{
 
     async getAllReserved(req, res, next) {
         try{
-            let corrections = await Correction.listByStatus(Status.RESERVADA);
+            let corrections = await correctionService
+                    .listByStatus(Correction.Status.RESERVADA);
             success(res, corrections, null);
         }catch(err) { 
             next(err); 

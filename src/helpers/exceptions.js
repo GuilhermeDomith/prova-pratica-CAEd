@@ -1,11 +1,18 @@
 
 class ErrorHandler extends Error {
-  constructor(errorType, statusCode = undefined, data = undefined) {
+  constructor(
+      errorType = {}, 
+      statusCode = null,
+      data = null,
+      validations = []) {
+    
     super();
-    this.data = data;
-    this.statusCode = statusCode;
     this.type = errorType.type;
     this.message = errorType.message;
+
+    this.data = data;
+    this.statusCode = statusCode || errorType.defaultStatusCode;
+    this.validations = validations;
   }
 }
 

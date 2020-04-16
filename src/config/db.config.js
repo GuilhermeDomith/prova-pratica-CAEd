@@ -1,4 +1,4 @@
-require('../config/env.config');
+require('./env.config');
 const mongoose = require('mongoose');
 
 class DataBaseConnection{
@@ -11,6 +11,9 @@ class DataBaseConnection{
         this.mongoose.connection.on('connected', this.onConnected);
         this.mongoose.connection.on('disconnected', this.onDisconnected);
         this.mongoose.connection.on('error', this.onError);
+        
+        this.mongoose.set('useFindAndModify', false);
+        mongoose.set('useCreateIndex', true);
     }
 
     buildConnectionURI() {
@@ -46,4 +49,4 @@ class DataBaseConnection{
 
 }
 
-module.exports = new DataBaseConnection().connect();
+module.exports = new DataBaseConnection()

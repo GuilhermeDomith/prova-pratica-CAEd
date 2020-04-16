@@ -1,3 +1,5 @@
+const { ErrorHandler } = require('./exceptions');
+
 const success = (res, data, description) => {
     res.json({
         data,
@@ -7,13 +9,20 @@ const success = (res, data, description) => {
 }
 
 const error = (err, res) => {
-    const { statusCode, type, message, data } = err;
-    
-    res.status(statusCode || 500).json({
-        data: data,
+
+    if(err instanceof ErrorHandler){
+        err.validations.forEach(valid => {
+            err.message += ` ${valid}`
+        });
+    }
+
+    //console.error(err)
+
+    res.status(err.statusCode || 500).json({
+        data: err.data,
         situacao: "ERRO",
-        tipo: type,
-        descricao: message
+        tipo: err.type,
+        descricao: err.message
     });
 }
 
