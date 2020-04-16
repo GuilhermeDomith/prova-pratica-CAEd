@@ -27,7 +27,7 @@ $ mongod
 - Caso o MongoDB instalado necessite de credenciais, adicione o usuário e senha nos arquivos __.env__ e __.test.env__. Se não, pode ser mantido a configuração. 
 
 
-### 2. **Executando a aplicação**
+### 3. **Executando a Testes**
 
 - Para executar os testes.
 
@@ -45,6 +45,10 @@ $ npm test --  __tests__/unit/invalid_corrections.test.js
 $ npm test --  --silent
 
 ```
+
+### 4. **Executando a aplicação**
+
+Será executado por padrão em http://localhost:3000 
 
 - Para executar em ambiente de desenvolvimento.
 
