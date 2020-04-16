@@ -20,7 +20,7 @@ $ npm install
 
 ### 2. **Configurando Banco de Dados**
 
-- Inicie mongoDB.
+- Inicie o MongoDB.
 ```Shell
 $ mongod
 ```
@@ -32,12 +32,12 @@ $ mongod
 - Para executar os testes.
 
 ```Shell
-# Utiliza credenciais do .test.env para o banco de dados.
-# Realiza os testes com Jest.
+# Utilizará credenciais do '.test.env' para o banco de dados
+# e serão executados todos os testes, utilizando o Jest.
 
 $ npm run test
 
-# Para executar um único teste ou ocultar os logs exibidos,
+# Para executar um único teste, ou ocultar os logs exibidos,
 # utilize os mesmos atributos que seriam utilizados no Jest,
 # inserindo um ou mais comandos após '--', por exemplo:
 
@@ -49,11 +49,11 @@ $ npm run test --  --silent
 - Para executar em modo produção ou desenvolvedor.
 
 ```Shell
-# Utilizará credenciais do .env para o banco de dados e.
+# Utilizará credenciais do '.env' para o banco de dados e
 # será executado com o Node.js.
 $ npm start 
 
-# Utilizará credenciais do .test.env para o banco de dados e
+# Utilizará credenciais do '.test.env' para o banco de dados e
 # será executado com o nodemon.
 $ npm run dev 
 ```
