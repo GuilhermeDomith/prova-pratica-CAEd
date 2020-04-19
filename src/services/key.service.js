@@ -10,7 +10,7 @@ class keyService{
         return await Key.findById(keyId)
             .populate({
                 path: 'opcoes',
-                match: { valor: optionValue }
+                match: { _id: optionValue }
                 })
             .populate({
                 path: '_creator',

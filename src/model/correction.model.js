@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
-const Schema = mongoose.Schema;
+const Schema = require('./custom.schema');
 
 const CorrectionSchema = new Schema({
     item: { type: String, required: true },
@@ -36,15 +36,6 @@ CorrectionSchema.statics.Status = {
     COM_DEFEITO: 4
 }
 
-CorrectionSchema.methods.toJSON = function() {
-    const obj = this.toObject();
-
-    obj.id = obj._id;
-    delete obj._id;
-
-    return obj;
-}
-
 CorrectionSchema.methods.populateAll = async function(){
     await this.populate({ path: 'chave', model: 'Key' }).execPopulate();
     await this.populate({ path: 'chave.opcoes', model: 'Option' }).execPopulate();
@@ -54,7 +45,6 @@ CorrectionSchema.methods.populateAll = async function(){
 CorrectionSchema.plugin(AutoIncrement, {id: 'correction_ordem_seq', inc_field: 'ordem'});
 const Correction = mongoose.model('Correction', CorrectionSchema);
 
-Correction.createIndexes({ ordem: 1})
 Correction.createIndexes({ ordem: 1, situacao: 1 })
 
 module.exports = Correction

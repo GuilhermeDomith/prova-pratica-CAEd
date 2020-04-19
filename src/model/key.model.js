@@ -1,30 +1,28 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const Schema = require('./custom.schema');
 
 
 const KeySchema = new Schema({
     _creator: { type: Schema.Types.ObjectId, ref: 'Correction'}, 
     titulo: { type: String, required: true },
-    valor: { type: Number, required: false},
+    valor: { type: Schema.Types.ObjectId, ref: 'Option'},
     opcoes:[
         { type: Schema.Types.ObjectId, ref: 'Option' }
     ]
 });
-
-KeySchema.methods.toJSON = function() {
-    const obj = this.toObject();
-
-    obj.id = obj._id;
-    delete obj._id;
-    
-    return obj;
-}
 
 KeySchema.methods.populateAll = async function(doc) {
     await this.populate('opcoes').execPopulate();
     return this;
 }
 
+KeySchema.set('toJSON',{
+    virtuals:true,
+    transform: function (doc, ret, options) {
+        delete ret._id;
+        delete ret._creator;
+    }
+});
 
 const Key = mongoose.model('Key', KeySchema);
 

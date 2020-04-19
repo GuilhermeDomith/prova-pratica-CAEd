@@ -43,7 +43,7 @@ const selectOptionFromKey = (keys, fakeOptions=false, fakeKey=false) => {
         (key) => {
             valor = (fakeOptions)?
                 faker.random.number() :
-                faker.random.arrayElement(key.opcoes).valor
+                faker.random.arrayElement(key.opcoes)._id
             
             id = (fakeKey)?
                 mongoose.Types.ObjectId() : 

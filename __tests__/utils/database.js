@@ -6,8 +6,7 @@ const Option = mongoose.model('Option');
 
 module.exports = {
     truncade: async () => {
-        await Correction.counterReset('correction_ordem_seq'),
-        await Option.counterReset('option_valor_seq')
+        await Correction.counterReset('correction_ordem_seq');
 
         return Promise.all([
             Correction.deleteMany({}),
