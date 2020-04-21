@@ -4,7 +4,7 @@ const success = (res, data, description) => {
     res.json({
         data,
         situacao: 'SUCESSO',
-        descricao: description
+        descricao: description || undefined
     });
 }
 
@@ -15,8 +15,6 @@ const error = (err, res) => {
             err.message += ` ${valid}`
         });
     }
-
-    //console.error(err)
 
     res.status(err.statusCode || 500).json({
         data: err.data,

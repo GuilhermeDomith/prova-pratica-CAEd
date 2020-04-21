@@ -10,12 +10,9 @@ const KeySchema = new Schema({
 });
 
 
-const optionsToJSON = {
-    virtuals:true,
-    transform: function (doc, ret, options) {
-        delete ret._id;
-        delete ret._creator;
-    }
+const transformJSON = function (doc, ret, options) {
+    options._parentOptions.transform(doc, ret, options)
+    delete ret._creator;
 }
 
 
@@ -26,8 +23,7 @@ const populateAll = async function () {
 
 
 KeySchema.set('populateAll', populateAll);
-KeySchema.set('toJSON', optionsToJSON);
-
+KeySchema.get('toJSON').transform = transformJSON;
 const Key = mongoose.model('Key', KeySchema);
 
 module.exports = {
