@@ -5,8 +5,9 @@ const { messages } = require('../helpers/success_messages');
 const { CorrectionErrors }  = require('../helpers/error_types');
 const correctionService = require('../services/correction.service');
 
-const Correction = mongoose.model('Correction');
+const Correction = mongoose.model('CorrectionItem');
 const Key = mongoose.model('Key');
+const CorrectionStatus = Correction.Status;
 
 
 class CorrectionsController{
@@ -40,7 +41,7 @@ class CorrectionsController{
 
             await correctionService.saveKeysFromCorrection(correction, keys);
             await correctionService.changeStatusById(
-                    correction.id, Correction.Status.CORRIGIDA);
+                    correction.id, CorrectionStatus.CORRIGIDA);
 
             success(res, messages.ITEM_CORRECTED);
         }catch(err) { 
@@ -65,7 +66,7 @@ class CorrectionsController{
 
             await correctionService.saveKeysFromCorrection(correction, keys);
             await correctionService.changeStatusById(
-                    correction.id, Correction.Status.RESERVADA);
+                    correction.id, CorrectionStatus.RESERVADA);
 
             success(res, null, messages.ITEM_RESERVED);
         }catch(err) { 
@@ -76,7 +77,7 @@ class CorrectionsController{
     async getAllReserved(req, res, next) {
         try{
             let corrections = await correctionService
-                    .listByStatus(Correction.Status.RESERVADA);
+                    .listByStatus(CorrectionStatus.RESERVADA);
             success(res, corrections, null);
         }catch(err) { 
             next(err); 

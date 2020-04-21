@@ -37,7 +37,7 @@ class AppController{
         database.connect();
         require('./model/option.model')
         require('./model/key.model')
-        require('./model/correction.model')
+        require('./model/correction_item.model')
     }
 }
 

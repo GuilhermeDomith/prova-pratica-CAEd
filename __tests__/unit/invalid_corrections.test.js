@@ -1,7 +1,7 @@
 const requests = require('../requests/correction.requests');
 const mongoose = require('mongoose');
 
-const Correction =  mongoose.model('Correction');
+const Correction =  mongoose.model('CorrectionItem');
 const factory = require('../utils/factories');
 const dbUtils = require('../utils/database');
 
@@ -10,7 +10,7 @@ describe('Invalid Corrections', () => {
     beforeAll(async (done) => {
         await dbUtils.truncade();
         
-        this.corrections = await factory.createMany('Correction', 3)
+        this.corrections = await factory.createMany('CorrectionItem', 3)
         this.corrections = await Correction.find({}).sort({ ordem: 1})
 
         done();

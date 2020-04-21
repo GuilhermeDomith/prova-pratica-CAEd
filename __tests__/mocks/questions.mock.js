@@ -1,10 +1,10 @@
-const app = require('../../src/app');
-const mongoose = require('mongoose');
+require('../../src/app');
+//const mongoose = require('mongoose');
 const factory = require('../utils/factories');
 const dbUtils = require('../utils/database');
 
 const createMock = () => {
-    return factory.createMany('Correction', 10)
+    return factory.createMany('CorrectionItem', 10)
 }
 
 dbUtils.truncade()

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const Correction = mongoose.model('Correction');
+const Correction = mongoose.model('CorrectionItem');
 const Key = mongoose.model('Key');
 const Option = mongoose.model('Option');
 

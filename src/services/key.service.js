@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
-
-const Key = mongoose.model('Key');
 const { ErrorHandler } = require('../helpers/exceptions');
 const { CorrectionErrors } = require('../helpers/error_types');
+
+const Key = mongoose.model('Key');
+
 
 class keyService{
 
@@ -18,6 +19,7 @@ class keyService{
                 })
             .exec();
     }
+
 
     async validateKeyValue(keyId, correctionId, optionValue){
         const key = await this.findKeyWithOption(keyId, correctionId, optionValue);
@@ -37,6 +39,7 @@ class keyService{
         return key;
     }
 
+
     async validateManyKeys(keys, correction){
         if(!Array.isArray(keys) || keys.length === 0)
             throw new ErrorHandler(CorrectionErrors.INCORRECT_KEY);
@@ -49,6 +52,7 @@ class keyService{
                 this.validateKeyValue(key.id, correction.id, key.valor))
         )
     }
+    
 
     async updateMany(keys){
         return await Promise.all(
