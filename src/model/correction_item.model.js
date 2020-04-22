@@ -24,13 +24,21 @@ const CorrectionStatus = {
 
 const populateAll = async function () {
     await this.populate({ path: 'chave', model: 'Key' }).execPopulate();
-    await this.populate({ path: 'chave.opcoes', model: 'Option' }).execPopulate();
+    
+    if(this.chave)
+       await Promise.all( 
+           this.chave.map( (key) => key.populateAll() )
+       );
+
     return this;
 }
 
 
 const saveKeyAssociation = async function () {
     await this.populateAll();
+    
+    if(!this.chave) 
+        return;
 
     this.chave = await this.chave.map(async key => {
         key._creator = this.id;
@@ -47,7 +55,7 @@ CorrectionItemSchema.statics = {
     Status: CorrectionStatus,
 }
 
-CorrectionItemSchema .post('save', saveKeyAssociation);
+CorrectionItemSchema.post('save', saveKeyAssociation);
 CorrectionItemSchema.plugin(AutoIncrement, {id: 'correction_ordem_seq', inc_field: 'ordem'});
 
 const Correction = mongoose.model('CorrectionItem', CorrectionItemSchema);

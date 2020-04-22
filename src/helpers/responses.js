@@ -15,6 +15,8 @@ const error = (err, res) => {
             err.message += ` ${valid}`
         });
     }
+    
+    console.log(err)
 
     res.status(err.statusCode || 500).json({
         data: err.data,

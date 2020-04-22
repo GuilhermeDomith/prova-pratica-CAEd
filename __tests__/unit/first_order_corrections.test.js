@@ -11,7 +11,10 @@ describe('First Order for Corrections', () => {
     beforeAll(async (done) => {
         await dbUtils.truncade();
         
-        this.corrections = await factory.createMany('CorrectionItem', 3)
+        const options = await factory.createMany('Option', 10);
+        const questions = await factory.createMany('Question', 10, {}, { options })
+        await factory.createMany('CorrectionItem', 3, {}, { questions })
+
         this.corrections = await Correction.find({}).sort({ ordem: 1});
 
         done();
@@ -21,7 +24,9 @@ describe('First Order for Corrections', () => {
         const first = this.corrections[0];
 
         const response = await requests.getNext(false);
-        const { data } = response.body;
+        const { data, situacao } = response.body;
+
+        expect(situacao).toBe('SUCESSO');
         expect(data.id).toBe(first.id);
         done()
     });
@@ -30,6 +35,9 @@ describe('First Order for Corrections', () => {
         const first = this.corrections[0];
        
         const response = await requests.correct(first);
+        const { situacao } = response.body;
+
+        expect(situacao).toBe('SUCESSO');
         expect(response.status).toBe(200);
         done()
     });
@@ -38,6 +46,9 @@ describe('First Order for Corrections', () => {
         const third = this.corrections[2];
 
         const response = await requests.correct(third);
+        const { situacao } = response.body;
+
+        expect(situacao).toBe('ERRO');
         expect(response.status).not.toBe(200);
         done()
     });
@@ -46,6 +57,9 @@ describe('First Order for Corrections', () => {
         const second = this.corrections[1];
 
         const response = await requests.reserve(second)
+        const { situacao } = response.body;
+
+        expect(situacao).toBe('SUCESSO');
         expect(response.status).toBe(200);
         done()
     });
@@ -54,7 +68,9 @@ describe('First Order for Corrections', () => {
         const third = this.corrections[2];
 
         const response = await requests.getNext(false);
-        const { data } = response.body;
+        const { data, situacao } = response.body;
+
+        expect(situacao).toBe('SUCESSO');
         expect(data.id).toBe(third.id);
         done()
     });
@@ -63,16 +79,20 @@ describe('First Order for Corrections', () => {
         const third = this.corrections[2];
 
         const response = await requests.correct(third)
+        const { situacao } = response.body;
+
+        expect(situacao).toBe('SUCESSO');
         expect(response.status).toBe(200);
         done()
     });
 
-    it('Should get null data', async (done) => {
+    it('Should get null data when items are finished', async (done) => {
         const third = this.corrections[2];
 
         const response = await requests.getNext(false);
-        const { data } = response.body;
+        const { data, situacao } = response.body;
 
+        expect(situacao).toBe('ERRO');
         expect(data).toBe(null);
         expect(response.status).toBe(200);
         done()
@@ -82,8 +102,9 @@ describe('First Order for Corrections', () => {
         const second = this.corrections[1];
 
         const response = await requests.getNext(true)
-        const { data } = response.body;
+        const { data, situacao } = response.body;
 
+        expect(situacao).toBe('SUCESSO');
         expect(data.id).toBe(second.id);
         done()
     });
@@ -92,8 +113,9 @@ describe('First Order for Corrections', () => {
         const second = this.corrections[1];
 
         const response = await requests.listReserved();
-        const { data } = response.body;
+        const { data, situacao } = response.body;
 
+        expect(situacao).toBe('SUCESSO');
         expect(data.length).toBe(1)
         expect(data[0].id).toBe(second.id);
         done()

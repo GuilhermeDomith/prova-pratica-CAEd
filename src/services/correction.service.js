@@ -3,8 +3,8 @@ const keyService = require('../services/key.service');
 const { ErrorHandler } = require('../helpers/exceptions');
 const { CorrectionErrors } = require('../helpers/error_types');
 
-const Correction = mongoose.model('CorrectionItem');
-const Status = Correction.Status;
+const Item = mongoose.model('CorrectionItem');
+const Status = Item.Status;
 const Errors = CorrectionErrors;
 
 
@@ -16,25 +16,23 @@ class CorrectionService{
 
         find_status.push(Status.DISPONIVEL);
 
-        return await Correction
-            .findOne({ situacao: {$in: find_status}})
+        return await Item
+            .findOne({ situacao: { $in: find_status } })
             .sort({ ordem: 1, situacao: 1 })
-            .populate({ path: 'chave', model: 'Key' })
-            .populate({ path: 'chave.opcoes', model: 'Option' })
             .exec();
     }
 
 
     async changeStatusById(id, status){
-        return await Correction.updateOne(
-                {_id: id},
-                {$set: {situacao: status}}
+        return await Item.updateOne(
+                { _id: id },
+                { $set: { situacao: status } }
             );
     }
 
 
     async listByStatus(status){
-        return await Correction
+        return await Item
             .find({ situacao: status })
             .sort({ ordem: 1 })
             .exec();

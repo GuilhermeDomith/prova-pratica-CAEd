@@ -7,30 +7,24 @@ const Key = mongoose.model('Key');
 
 class keyService{
 
-    async findKeyWithOption(keyId, correctionId, optionValue){
-        return await Key.findById(keyId)
-            .populate({
-                path: 'opcoes',
-                match: { _id: optionValue }
-                })
-            .populate({
-                path: '_creator',
-                match: { _id: correctionId}
-                })
+    async findKeyWithOption(keyId, correctionId){
+
+        let key = await Key.findOne({ _id: keyId })
+            .where('_creator').equals(correctionId)
+            .populate('questao')
             .exec();
+
+        return key;
     }
 
 
     async validateKeyValue(keyId, correctionId, optionValue){
-        const key = await this.findKeyWithOption(keyId, correctionId, optionValue);
-
-        if(key === null)
+        const key = await this.findKeyWithOption(keyId, correctionId);
+        
+        if(key == null)
             throw new ErrorHandler(CorrectionErrors.INCORRECT_KEY)
 
-        if(key._creator === null || key._creator._id != correctionId) 
-            throw new ErrorHandler(CorrectionErrors.INCORRECT_KEY)
-
-        if(key.opcoes.length === 0){ 
+        if(key.opcoes == null || !key.opcoes.includes(optionValue)){ 
             let validations = [`Valor '${optionValue}' não é válido para o item ${keyId}`]
             throw new ErrorHandler(
                 CorrectionErrors.INCORRECT_KEY, null, null, validations)

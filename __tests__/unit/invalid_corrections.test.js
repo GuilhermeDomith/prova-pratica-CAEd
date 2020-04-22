@@ -10,8 +10,11 @@ describe('Invalid Corrections', () => {
     beforeAll(async (done) => {
         await dbUtils.truncade();
         
-        this.corrections = await factory.createMany('CorrectionItem', 3)
-        this.corrections = await Correction.find({}).sort({ ordem: 1})
+        const options = await factory.createMany('Option', 10);
+        const questions = await factory.createMany('Question', 10, {}, { options })
+        await factory.createMany('CorrectionItem', 3, {}, { questions })
+
+        this.corrections = await Correction.find({}).sort({ ordem: 1});
 
         done();
     })

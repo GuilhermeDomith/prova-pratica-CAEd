@@ -36,6 +36,7 @@ class AppController{
     configureDatabase(){
         database.connect();
         require('./model/option.model')
+        require('./model/question.model')
         require('./model/key.model')
         require('./model/correction_item.model')
     }

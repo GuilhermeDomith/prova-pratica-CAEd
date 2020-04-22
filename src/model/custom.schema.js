@@ -5,7 +5,7 @@ class CustomSchema extends mongoose.Schema{
     constructor(definition, options){
         super(definition, options);
 
-        let toJSONOptions = {
+        this.toJSONOptions = {
             virtuals:true,
             transform: function (doc, ret, options) {    
                 delete ret._id;
@@ -13,7 +13,7 @@ class CustomSchema extends mongoose.Schema{
         }
 
         this.set('versionKey', false);
-        this.set('toJSON', toJSONOptions);
+        this.set('toJSON', this.toJSONOptions);
     }
 
 }

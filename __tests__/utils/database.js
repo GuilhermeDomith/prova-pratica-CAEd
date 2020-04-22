@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Correction = mongoose.model('CorrectionItem');
 const Key = mongoose.model('Key');
 const Option = mongoose.model('Option');
+const Question = mongoose.model('Question');
 
 module.exports = {
     truncade: async () => {
@@ -12,6 +13,7 @@ module.exports = {
             Correction.deleteMany({}),
             Key.deleteMany({}),
             Option.deleteMany({}),
+            Question.deleteMany({})
         ]).then(() => 
             console.log('Truncade has been executed.'));      
     },

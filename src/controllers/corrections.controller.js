@@ -23,7 +23,7 @@ class CorrectionsController{
                 throw new ErrorHandler(CorrectionErrors.IS_EMPTY, null, null);
 
             await correction.populateAll();
-            success(res, correction, null);
+            success(res, correction.toJSON(), null);
         }catch(err){ 
             next(err); 
         }
