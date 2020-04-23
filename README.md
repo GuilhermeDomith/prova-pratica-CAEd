@@ -39,7 +39,7 @@ $ npm test
 
 # Para executar um único teste, ou ocultar os logs exibidos.
 
-$ npm test --  __tests__/unit/invalid_corrections.test.js
+$ npm test --  __tests__/unit/corrections_in_order_1.test.js
 $ npm test --  --silent
 
 ```
