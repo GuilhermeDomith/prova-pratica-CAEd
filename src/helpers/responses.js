@@ -1,10 +1,10 @@
 const { ErrorHandler } = require('./exceptions');
 
-const success = (res, data, description) => {
+const success = (res, { description=undefined, data=undefined }) => {
     res.json({
         data,
         situacao: 'SUCESSO',
-        descricao: description || undefined
+        description
     });
 }
 
@@ -16,7 +16,6 @@ const error = (err, res) => {
         });
     }
     
-
     res.status(err.statusCode || 500).json({
         data: err.data,
         situacao: "ERRO",

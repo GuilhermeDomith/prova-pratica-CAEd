@@ -9,27 +9,27 @@ invalidToStatus[Status.COM_DEFEITO] = 'Item inválido para ser marcado como com 
 
 const CorrectionErrors = {
     IS_EMPTY: { 
-        status: "SEM_CORRECAO", 
+        type: "SEM_CORRECAO", 
         defaultStatusCode: 200,
         message: 'Não existem mais correções disponíveis.' 
     },
     INCORRECT_KEY: { 
-        status: "CHAVE_INCORRETA",
+        type: "CHAVE_INCORRETA",
         defaultStatusCode: 400,
         message: 'Chave de correção incorreta.' 
     },
     ALREADY_CORRECTED: { 
-        status: "ITEM_CORRIGIDO",
+        type: "ITEM_CORRIGIDO",
         defaultStatusCode: 400, 
         message: 'Item já corrigido.' 
     },
     INVALID_TO_STATUS: (status) => ({
-        status: "ITEM_INVALIDO",
+        type: "ITEM_INVALIDO",
         defaultStatusCode: 400, 
         message: invalidToStatus[status]
     }),
     NOT_FOUND: {
-        status: "ITEM_NAO_ENCONTRADO",
+        type: "ITEM_NAO_ENCONTRADO",
         defaultStatusCode: 404, 
         message: 'Correção não existe.' 
     }

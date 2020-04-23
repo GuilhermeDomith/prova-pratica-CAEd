@@ -7,7 +7,7 @@ router.post('/:id', correctionsController.correct);
 router.post('/reservadas/:id', correctionsController.reserve);
 router.get('/reservadas', correctionsController.getAllReserved);
 
-router.put('/defeituosas/:id', correctionsController.markAsBrocked);
+router.post('/defeituosas/:id', correctionsController.markAsBrocked);
 
 module.exports = router;
 

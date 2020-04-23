@@ -20,11 +20,14 @@ class CorrectionsController{
         try{
             let correction = await Correction.getNextAvailable(allowReserved);
 
+            if(correction == null && !allowReserved)
+                correction = await Correction.getNextAvailable(true);
+
             if(correction == null)
-                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, undefined, null);
+                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, null);
 
             await correction.populateAll();
-            success(res, correction);
+            success(res, { data: correction });
         }catch(err){ 
             next(err); 
         }
@@ -42,7 +45,7 @@ class CorrectionsController{
             await Key.updateManyValues(keys)
             await Correction.updateStatusById(id, Status.CORRIGIDA);
 
-            success(res, undefined, messages.ITEM_CORRECTED);
+            success(res, { description: messages.ITEM_CORRECTED });
         }catch(err) { 
             next(err);
         }
@@ -60,7 +63,7 @@ class CorrectionsController{
             await Key.updateManyValues(keys)
             await Correction.updateStatusById(id,  Status.RESERVADA);
 
-            success(res, undefined, messages.ITEM_RESERVED);
+            success(res, { description: messages.ITEM_RESERVED });
         }catch(err) { 
             next(err); 
         }
@@ -75,7 +78,7 @@ class CorrectionsController{
             await validator.validate();
 
             await Correction.updateStatusById(id, Status.COM_DEFEITO);
-            success(res, undefined, messages.ITEM_MARKED_BROCKED);
+            success(res, { description: messages.ITEM_MARKED_BROCKED });
         }catch(err) { 
             next(err); 
         }
@@ -86,7 +89,7 @@ class CorrectionsController{
             let corrections = await Correction
                 .listByStatus(Status.RESERVADA, { populateAll: true});
 
-            success(res, corrections, null);
+            success(res, { data: corrections });
         }catch(err) { 
             next(err); 
         }

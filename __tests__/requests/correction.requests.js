@@ -10,26 +10,39 @@ class CorrectionRequests{
             .get(`/correcoes/proxima/?reservada=${reserved}`);
     }
 
-    async correct(correction, fakeOptions=false, fakeKey=false){
-        await correction.populateAll()
+    async correct(correction, fakeOptions=false, fakeKey=false, fakeItem=false){
+        //await correction.populateAll()
         let keysCorrect = []
 
         keysCorrect = selectOptionFromKey(correction.chave, fakeOptions, fakeKey);
 
+        let itemId = fakeItem?
+            mongoose.Types.ObjectId()
+            : correction.id;
+
         return request(app)
-            .post(`/correcoes/${correction.id}`)
+            .post(`/correcoes/${itemId}`)
             .send({ chave: keysCorrect });
     }
 
-    async reserve(correction, fakeOptions=false, fakeKey=false){
-        await correction.populateAll()
+    async reserve(correction, fakeOptions=false, fakeKey=false, fakeItem=false){
+        //await correction.populateAll()
         let keysCorrect = []
 
         keysCorrect = selectOptionFromKey(correction.chave, fakeOptions, fakeKey);
 
+        let itemId = fakeItem?
+            mongoose.Types.ObjectId()
+            : correction.id;
+
         return request(app)
-            .post(`/correcoes/reservadas/${correction.id}`)
+            .post(`/correcoes/reservadas/${itemId}`)
             .send({ chave: keysCorrect });
+    }
+
+    async marckAsBrocked(correction){
+        return request(app)
+            .post(`/correcoes/defeituosas/${correction.id}`)
     }
 
     async listReserved(){

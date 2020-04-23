@@ -6,6 +6,7 @@ const CorrectionItem = mongoose.model('CorrectionItem')
 const Key = mongoose.model('Key')
 const Status = CorrectionItem.Status;
 
+
 class ValidateCorrection{
 
     constructor (itemId, keyValues, toStatus){
@@ -16,6 +17,7 @@ class ValidateCorrection{
 
         this.validations = [];
         this.isValidKeys = false;
+        this.isValidStatus = false;
         this.ErrorStatus = CorrectionErrors.INVALID_ITEM_TO_CORRECT;
 
     }
@@ -41,7 +43,8 @@ class ValidateCorrection{
 
 
     async canChangeStatus () {
-        if(!this.Item instanceof CorrectionItem) 
+        if( !this.Item ||
+            !this.Item instanceof CorrectionItem) 
             return false;
 
         switch ( this.toStatus ){
@@ -117,6 +120,7 @@ class ValidateCorrection{
 
 
     async checkValidate () {
+        
         if(this.Item == null)
             throw new ErrorHandler(CorrectionErrors.NOT_FOUND)
 
@@ -127,8 +131,8 @@ class ValidateCorrection{
             throw new ErrorHandler(CorrectionErrors.INVALID_TO_STATUS(this.toStatus));
 
         if( ! this.isValidKeys && this.toStatus != Status.COM_DEFEITO)
-            throw new ErrorHandler(CorrectionErrors.INCORRECT_KEY,
-                undefined, undefined, this.validations);
+            throw new ErrorHandler(
+                CorrectionErrors.INCORRECT_KEY, undefined, this.validations );
     }
 
 }
