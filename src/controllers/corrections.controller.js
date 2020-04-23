@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+
+const ValidateCorrection = require('../helpers/validate_correction');
 const { success } = require('../helpers/responses');
 const { ErrorHandler } = require('../helpers/exceptions');
 const { messages } = require('../helpers/success_messages');
 const { CorrectionErrors }  = require('../helpers/error_types');
-const correctionService = require('../services/correction.service');
 
 const Correction = mongoose.model('CorrectionItem');
 const Key = mongoose.model('Key');
-const CorrectionStatus = Correction.Status;
+const Status = Correction.Status;
 
 
 class CorrectionsController{
@@ -17,13 +18,13 @@ class CorrectionsController{
             req.query.reservada.toLowerCase() == 'true';
 
         try{
-            let correction = await correctionService.getNextAvailable(allowReserved);
+            let correction = await Correction.getNextAvailable(allowReserved);
 
             if(correction == null)
-                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, null, null);
+                throw new ErrorHandler(CorrectionErrors.IS_EMPTY, undefined, null);
 
             await correction.populateAll();
-            success(res, correction.toJSON(), null);
+            success(res, correction);
         }catch(err){ 
             next(err); 
         }
@@ -34,16 +35,14 @@ class CorrectionsController{
         const keys = req.body.chave || [];
         
         try{
-            // valida se existe
-            let correction = await Correction.findById(id);
-            if(correction == null) 
-                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM, 404)
 
-            await correctionService.saveKeysFromCorrection(correction, keys);
-            await correctionService.changeStatusById(
-                    correction.id, CorrectionStatus.CORRIGIDA);
+            let validator = new ValidateCorrection(id, keys, Status.CORRIGIDA)
+            await validator.validate();
 
-            success(res, messages.ITEM_CORRECTED);
+            await Key.updateManyValues(keys)
+            await Correction.updateStatusById(id, Status.CORRIGIDA);
+
+            success(res, undefined, messages.ITEM_CORRECTED);
         }catch(err) { 
             next(err);
         }
@@ -54,21 +53,29 @@ class CorrectionsController{
         const keys = req.body.chave || [];
 
         try{
-            // valida se existe
-            let correction = await Correction.findById(id);
-            if(correction == null) 
-                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM, 404)
-            
-            // valida se pode ser reservado
-            let nextItem = await correctionService.getNextAvailable();
-            if (nextItem == null || nextItem.id != id)
-                throw new ErrorHandler(CorrectionErrors.INVALID_ITEM);
 
-            await correctionService.saveKeysFromCorrection(correction, keys);
-            await correctionService.changeStatusById(
-                    correction.id, CorrectionStatus.RESERVADA);
+            let validator = new ValidateCorrection(id, keys,  Status.RESERVADA)
+            await validator.validate();
 
-            success(res, null, messages.ITEM_RESERVED);
+            await Key.updateManyValues(keys)
+            await Correction.updateStatusById(id,  Status.RESERVADA);
+
+            success(res, undefined, messages.ITEM_RESERVED);
+        }catch(err) { 
+            next(err); 
+        }
+    }
+
+    async markAsBrocked(req, res, next) {
+        const { id } = req.params;
+
+        try{
+
+            let validator = new ValidateCorrection(id, [],  Status.COM_DEFEITO)
+            await validator.validate();
+
+            await Correction.updateStatusById(id, Status.COM_DEFEITO);
+            success(res, undefined, messages.ITEM_MARKED_BROCKED);
         }catch(err) { 
             next(err); 
         }
@@ -76,8 +83,9 @@ class CorrectionsController{
 
     async getAllReserved(req, res, next) {
         try{
-            let corrections = await correctionService
-                    .listByStatus(CorrectionStatus.RESERVADA);
+            let corrections = await Correction
+                .listByStatus(Status.RESERVADA, { populateAll: true});
+
             success(res, corrections, null);
         }catch(err) { 
             next(err); 

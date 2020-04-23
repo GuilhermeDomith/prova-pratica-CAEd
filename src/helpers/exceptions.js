@@ -2,8 +2,8 @@
 class ErrorHandler extends Error {
   constructor(
       errorType = {}, 
-      statusCode = null,
-      data = null,
+      statusCode = undefined,
+      data = undefined,
       validations = []) {
     
     super();

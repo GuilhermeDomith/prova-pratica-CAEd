@@ -19,12 +19,41 @@ const transformJSON = function (doc, ret, options) {
 const populateAll = async function () {
     await this.populate('questao').execPopulate();
     await this.questao.populateAll();
+
     return this;
+}
+
+
+const findKey = async function (id, itemId) {
+    try{
+        let key = await this.findOne({ _id: id })
+                .where('_creator').equals(itemId)
+                .populate('questao')
+                .exec();
+        return key;
+    }catch{
+        return null;
+    }
+}
+
+
+const updateManyValues = async function (keys) {
+    return await Promise.all(
+        keys.map(key =>
+            Key.updateOne(
+                {_id: key.id}, 
+                {$set: {valor: key.valor}})
+        ));
 }
 
 
 KeySchema.methods = {
     populateAll,
+}
+
+KeySchema.statics = {
+    findKey,
+    updateManyValues
 }
 
 KeySchema.virtual('opcoes').get(function () { 
